@@ -1,0 +1,93 @@
+# cmd-android：Android Shell 命令执行框架
+
+本项目是基于 Kotlin 协程的 Android Shell 命令执行库，支持 **User**、**Shizuku** 和 **Root** 三种权限模式，提供简洁、统一的 API，极大简化命令执行流程。无论是普通用户权限还是复杂的 Shizuku 回调处理，都能几行代码搞定！
+
+```kotlin
+val shell: Shell = ShizukuShell(context)
+if (shell.isAvailable()) {
+    val result = shell.exec("echo test", timeout = 20_000L)
+    println("标准输出: ${result.stdout}")
+    println("错误输出: ${result.stderr}")
+    println("退出码: ${result.exitCode}")
+}
+```
+
+## 核心亮点
+
+- **多模式支持**：无缝支持 **User、Shizuku 和 Root** 三种权限模式，满足不同场景需求。
+- **Shizuku API 封装**：本框架在内部处理了所有有关**授权、AIDL 实现、服务绑定**等的操作，只需实例化、执行命令即可
+- **Kotlin 协程集成**：统一而简单的挂起式 API，告别繁琐。
+- **统一接口**：`Shell` 接口抽象不同模式，提供一致、简洁的调用体验。 
+
+![demo](https://github.com/denclint86/cmd-android/blob/master/demo.gif)
+
+## 快速开始
+
+### 1. 添加依赖
+
+在模块的 `build.gradle.kts` 中添加：
+
+```kotlin
+dependencies {
+    implementation("com.github.denclint86:cmd-android:${latest_version}") // 查看本项目最新 release
+    implementation("dev.rikka.shizuku:provider:shizuku_api:${latest_version}")
+}
+```
+
+在[Shizuku 官方仓库](https://github.com/RikkaApps/Shizuku) 查看最新版本
+
+### 2. 配置 Shizuku Provider
+
+在 `AndroidManifest.xml` 中添加：
+
+```xml
+<provider
+    android:name="rikka.shizuku.ShizukuProvider"
+    android:authorities="${applicationId}.shizuku"
+    android:enabled="true"
+    android:exported="true"
+    android:multiprocess="false"
+    android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+```
+
+> **提示**：想深入了解 Shizuku？查看 [Shizuku 官方文档](https://shizuku.rikka.app/) 或 [示例 Demo](https://github.com/RikkaApps/Shizuku-API/tree/master/demo)。
+
+## 使用示例
+
+### 执行简单命令
+
+```kotlin
+val shell: Shell = UserShell() // 或 ShizukuShell(context), RootShell()
+if (shell.isAvailable()) {
+    val result = shell.exec("pm list packages", timeout = 10_000L)
+    if (result.isSuccess) {
+        println("已安装应用: ${result.stdout}")
+    } else {
+        println("错误: ${result.stderr}, 退出码: ${result.exitCode}")
+    }
+}
+```
+
+### 处理复杂场景
+
+```kotlin
+val shell: Shell = ShizukuShell(context)
+launch(Dispatchers.IO) {
+    val result = shell.exec("dumpsys activity", timeout = 30_000L)
+    withContext(Dispatchers.Main) {
+    	if (result.isSuccess) {
+        	toast("命令执行成功: ${result.stdout.take(100)}...")
+        } else {
+        	toast("命令失败: ${result.stderr}")
+        }
+    } 
+}
+```
+
+## 已知问题
+
+- **Shizuku 并发**：高并发场景不稳定，这是由于用协程对接回调式接口导致，并发场景下可能出现预料之外的问题。
+- **Root 模式**：依赖 `su` 命令，需确保设备已 Root 并可访问 `su`。
+- **R8 混淆**：启用精简和混淆后，Shizuku 模块概率出现未知问题，表现为可以授权但命令不能被执行，需要在 `proguard-rules.pro` 中添加规则过滤
+
+> 遇到问题？提交 [Issue](https://github.com/denclint86/cmd-android/issues)。
