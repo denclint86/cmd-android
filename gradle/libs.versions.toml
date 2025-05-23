@@ -1,0 +1,17 @@
+[versions]
+agp = "8.5.1"
+kotlin = "2.1.0"
+kotlinxCoroutinesCore = "1.9.0"
+material = "1.12.0"
+shizuku_api = "13.1.5"
+
+[libraries]
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+shizuku-api = { module = "dev.rikka.shizuku:api", version.ref = "shizuku_api" }
+shizuku-provider = { module = "dev.rikka.shizuku:provider", version.ref = "shizuku_api" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
