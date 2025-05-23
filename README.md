@@ -1,6 +1,6 @@
 # cmd-android：Android Shell 命令执行框架
 
-本项目是基于 Kotlin 协程的 Android Shell 命令执行库，支持 **User**、**Shizuku** 和 **Root** 三种权限模式，提供简洁、统一的 API，极大简化命令执行流程。无论是普通用户权限还是复杂的 Shizuku 回调处理，都能几行代码搞定！
+本项目是基于 Kotlin 协程的 Android Shell 命令执行框架，支持 **User**、**Shizuku** 和 **Root** 三种权限模式，提供简洁、统一的 API，极大简化命令执行流程。无论是普通用户权限还是复杂的 Shizuku 回调处理，都能几行代码搞定！
 
 ```kotlin
 val shell: Shell = ShizukuShell(context)
@@ -23,7 +23,21 @@ if (shell.isAvailable()) {
 
 ## 快速开始
 
-### 1. 添加依赖
+### 1. 添加 maven
+
+在 settings.gradle.kts 中添加 jitpack 官方 Maven
+
+```kotlin
+dependencyResolutionManagement {
+	repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+	repositories {
+    	mavenCentral()
+	    maven { url = uri("https://jitpack.io") }
+	}
+}
+```
+
+### 2. 添加依赖
 
 在模块的 `build.gradle.kts` 中添加：
 
@@ -36,7 +50,7 @@ dependencies {
 
 在[Shizuku 官方仓库](https://github.com/RikkaApps/Shizuku) 查看最新版本
 
-### 2. 配置 Shizuku Provider
+### 3. 配置 Shizuku Provider
 
 在 `AndroidManifest.xml` 中添加：
 
