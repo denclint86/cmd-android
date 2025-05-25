@@ -85,7 +85,7 @@ class DemoActivity : AppCompatActivity() {
     ) = withContext(Dispatchers.Main) {
         MaterialAlertDialogBuilder(this@DemoActivity)
             .setTitle(title)
-            .setMessage("${result.output}\n${result.exitCode}")
+            .setMessage("output: ${result.output}\nexit code: ${result.exitCode}")
             .setCancelable(true)
             .setPositiveButton("确认") { _, _ ->
             }

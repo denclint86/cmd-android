@@ -1,6 +1,7 @@
 package com.niki.cmd
 
 import android.content.Context
+import android.util.Log
 import com.niki.cmd.model.PermissionHandler
 import com.niki.cmd.model.ShizukuShellExecutor
 import com.niki.cmd.model.UserServiceBinder
@@ -42,6 +43,10 @@ internal class ShizukuUtil(context: Context) {
             return ShellResult.error(serviceBindResult.message)
 
         val execResult = shizukuShellExecutor.execute(command)
+
+        execResult.data?.let {
+            Log.d(TAG, "Shizuku util 正常读取: $it")
+        }
 
         return execResult.data
             ?: ShellResult.error("Shizuku service unsupported")

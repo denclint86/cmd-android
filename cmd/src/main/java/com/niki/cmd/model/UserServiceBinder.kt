@@ -20,13 +20,12 @@ internal class UserServiceBinder(private val context: Context) : IUserServiceBin
     private var userService: IUserService? = null
     private var serviceConnection: ServiceConnection? = null
     private var userServiceArgs: UserServiceArgs? = null
-    private var isRunning = false
 
     /**
      * 潜在并发安全问题
      */
     override suspend fun bind(): Result<IUserService> {
-        if (isRunning && userService != null) {
+        if (userService != null) {
             Log.d(TAG, "Shizuku service 已经连接")
             return Result(
                 true, null, userService
@@ -49,7 +48,6 @@ internal class UserServiceBinder(private val context: Context) : IUserServiceBin
                 serviceConnection = object : ServiceConnection {
                     override fun onServiceConnected(name: ComponentName, service: IBinder) {
                         userService = IUserService.Stub.asInterface(service)
-                        isRunning = true
 
                         Log.d(TAG, "Shizuku service 成功连接: ${name.className}")
                         continuation.safeResume(Result(true, null, userService))
@@ -57,7 +55,6 @@ internal class UserServiceBinder(private val context: Context) : IUserServiceBin
 
                     override fun onServiceDisconnected(name: ComponentName) {
                         userService = null
-                        isRunning = false
 
                         Log.d(TAG, "Shizuku service 断开: ${name.className}")
                     }
@@ -87,7 +84,6 @@ internal class UserServiceBinder(private val context: Context) : IUserServiceBin
             userService = null
             serviceConnection = null
             userServiceArgs = null
-            isRunning = false
         }
     }
 }

@@ -1,24 +1,16 @@
 package com.niki.cmd
 
-import android.util.Log
 import com.niki.cmd.model.bean.ShellResult
 
 class RootShell : Shell {
-    companion object {
-        private const val EXECUTOR_NAME = "Root"
+    override val TEST_TIMEOUT: Long = 20_000L
+    override val PERMISSION_LEVEL: String = "Root"
+
+    override suspend fun isAvailable(): Boolean {
+        val result = execCommand("su -c echo test", PERMISSION_LEVEL)
+        return judge(result)
     }
 
-    private val util: BaseShellUtil by lazy { BaseShellUtil() }
-
-    override suspend fun isAvailable(): Boolean = try {
-        val result = util.execCommand("su -c echo test", Shell.TEST_TIMEOUT, EXECUTOR_NAME)
-        result.isSuccess && result.stdout.trim() == "test"
-    } catch (e: Exception) {
-        Log.e(TAG, "$EXECUTOR_NAME 不可用", e)
-        false
-    }
-
-    override suspend fun exec(command: String): ShellResult {
-        return util.execCommand("su -c $command", null, EXECUTOR_NAME)
-    }
+    override suspend fun exec(command: String): ShellResult =
+        execCommand("su -c $command", PERMISSION_LEVEL)
 }

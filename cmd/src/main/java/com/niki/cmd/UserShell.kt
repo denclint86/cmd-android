@@ -3,15 +3,11 @@ package com.niki.cmd
 import com.niki.cmd.model.bean.ShellResult
 
 class UserShell : Shell {
-    companion object {
-        private const val EXECUTOR_NAME = "User"
-    }
-
-    private val util: BaseShellUtil by lazy { BaseShellUtil() }
+    override val TEST_TIMEOUT: Long = 20_000L
+    override val PERMISSION_LEVEL: String = "User"
 
     override suspend fun isAvailable(): Boolean = true
 
-    override suspend fun exec(command: String): ShellResult {
-        return util.execCommand(command, null, EXECUTOR_NAME)
-    }
+    override suspend fun exec(command: String): ShellResult =
+        execCommand(command, PERMISSION_LEVEL)
 }

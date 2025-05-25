@@ -4,15 +4,20 @@ import com.niki.cmd.model.bean.ShellResult
 import kotlinx.coroutines.withTimeoutOrNull
 
 interface Shell {
-    companion object {
-        const val TEST_TIMEOUT = 10_000L
+    val TEST_TIMEOUT: Long
+    val PERMISSION_LEVEL: String
+
+    fun judge(result: ShellResult): Boolean {
+        return (result.isSuccess && result.stdout == "test")
     }
 
     suspend fun isAvailable(): Boolean
 
-    /**
-     * 无超时限制的命令执行, 这是极不安全和不稳定的的
-     */
+    suspend fun isAvailable(timeoutMillis: Long): Boolean =
+        withTimeoutOrNull(timeoutMillis) {
+            isAvailable()
+        } ?: false
+
     suspend fun exec(command: String): ShellResult
 
     suspend fun exec(command: String, timeoutMillis: Long): ShellResult =
