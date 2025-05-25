@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -31,10 +33,17 @@ class DemoActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        val userBtn = findViewById<Button>(R.id.userBtn)
-        val shizukuBtn = findViewById<Button>(R.id.shizukuBtn)
-        val rootBtn = findViewById<Button>(R.id.rootBtn)
+        val userBtn = findViewById<Button>(R.id.user_btn)
+        val shizukuBtn = findViewById<Button>(R.id.shizuku_btn)
+        val rootBtn = findViewById<Button>(R.id.root_btn)
+
         val toolBar = findViewById<Toolbar>(R.id.tool_bar)
+
+        val edBtn = findViewById<Button>(R.id.ed_btn)
+        val ed = findViewById<EditText>(R.id.ed)
+        val output = findViewById<TextView>(R.id.output)
+
+        val manager = ShellManager(this)
 
         userBtn.setOnClickListener {
             lifecycleScope.launch {
@@ -61,6 +70,17 @@ class DemoActivity : AppCompatActivity() {
         toolBar.setViewInsets { insets ->
             topMargin = insets.top
         }
+
+        edBtn.setOnClickListener {
+            val input = ed.text.toString()
+            lifecycleScope.launch {
+                val r = manager.exec(input)
+                withContext(Dispatchers.Main) {
+                    output.text = r.toUIString()
+                    ed.text.clear()
+                }
+            }
+        }
     }
 
     private suspend fun Shell.test() =
@@ -85,7 +105,7 @@ class DemoActivity : AppCompatActivity() {
     ) = withContext(Dispatchers.Main) {
         MaterialAlertDialogBuilder(this@DemoActivity)
             .setTitle(title)
-            .setMessage("output: ${result.output}\nexit code: ${result.exitCode}")
+            .setMessage(result.toUIString())
             .setCancelable(true)
             .setPositiveButton("确认") { _, _ ->
             }
@@ -94,4 +114,7 @@ class DemoActivity : AppCompatActivity() {
             .setOnCancelListener {
             }.create().show()
     }
+
+    private fun ShellResult.toUIString(): String =
+        "exit code: $exitCode\noutput: $output"
 }

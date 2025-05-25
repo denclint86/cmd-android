@@ -20,7 +20,9 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.google.android.material.color.DynamicColors { *; }
--dontwarn com.google.android.material.**
--keep class androidx.appcompat.app.** { *; }
--keep class androidx.activity.** { *; }
+-keep class dev.rikka.shizuku.** { *; }
+
+-keep class com.niki.** { *; }
+
+-dontwarn dev.rikka.shizuku.**
+-dontwarn com.niki.**
