@@ -100,8 +100,16 @@ launch(Dispatchers.IO) {
 
 ## 已知问题
 
-- **Shizuku 并发**：高并发场景不稳定，这是由于用协程对接回调式接口导致，并发场景下可能出现预料之外的问题。
 - **Root 模式**：依赖 `su` 命令，需确保设备已 Root 并可访问 `su`。
-- **R8 混淆**：启用精简和混淆后，Shizuku 模块概率出现未知问题，表现为可以授权但命令不能被执行，需要在 `proguard-rules.pro` 中添加规则过滤
+- **R8 混淆**：启用精简和混淆后，Shizuku 模块概率出现未知问题，表现为可以授权但命令不能被执行，需要在 `proguard-rules.pro` 中添加规则过滤:
+
+```text
+-keep class dev.rikka.shizuku.** { *; }
+
+-keep class com.niki.** { *; }
+
+-dontwarn dev.rikka.shizuku.**
+-dontwarn com.niki.**
+```
 
 > 遇到问题？提交 [Issue](https://github.com/denclint86/cmd-android/issues)。

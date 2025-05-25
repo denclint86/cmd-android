@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/colorSurfaceContainer"
                 app:layout_constraintTop_toTopOf="parent"
-                app:title="cmd-android-demo"
+                app:title="@string/app_name"
                 app:titleTextColor="?attr/colorOnSurface" />
         </LinearLayout>
 
