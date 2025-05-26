@@ -10,7 +10,5 @@ interface IUserService {
     void exit() = 1;
     
     // 执行 shell 命令
-    ExecResult exec(String command) = 2;
-    
-    // 可以添加更多自定义方法, 最后要自己实现
+    ExecResult exec(String command, long timeoutMillis) = 2;
 }

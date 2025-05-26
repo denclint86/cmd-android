@@ -81,7 +81,8 @@
             android:id="@+id/output"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="7dp"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginBottom="20dp"
             android:gravity="start|top"
             android:textColor="?attr/colorPrimary" />
     </LinearLayout>

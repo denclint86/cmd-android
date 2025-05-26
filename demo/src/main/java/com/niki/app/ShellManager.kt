@@ -6,6 +6,8 @@ import com.niki.cmd.Shell
 import com.niki.cmd.ShizukuShell
 import com.niki.cmd.UserShell
 import com.niki.cmd.model.bean.ShellResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ShellManager(context: Context) {
 
@@ -15,22 +17,25 @@ class ShellManager(context: Context) {
         UserShell()
     )
 
-    private var selectedExecutor: Shell? = null
+    private var selectedShell: Shell? = null
     private val selectedName: String
-        get() = selectedExecutor?.javaClass?.simpleName ?: "no_executor"
+        get() = selectedShell?.javaClass?.simpleName ?: "no_executor"
 
     private suspend fun selectExecutor() {
-        selectedExecutor = executors.firstOrNull {
+        selectedShell = executors.firstOrNull {
             it.isAvailable()
         }
     }
 
     suspend fun exec(command: String): ShellResult {
-        if (selectedExecutor == null)
-            selectExecutor()
-        val executor = selectedExecutor ?: throw Throwable("call select but no executor was chosen")
-        if (!executor.isAvailable())
-            throw Throwable("$selectedName is unavailable!")
-        return executor.exec(command)
+        selectExecutor().also {
+            withContext(Dispatchers.Main) {
+                "working as ${selectedShell?.PERMISSION_LEVEL}"
+            }
+        }
+        val shell = selectedShell ?: throw Throwable("no shell was chosen")
+//        if (!shell.isAvailable())
+//            throw Throwable("$selectedName is unavailable!")
+        return shell.exec(command, 5_000L)
     }
 }

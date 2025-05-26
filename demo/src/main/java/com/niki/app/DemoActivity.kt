@@ -26,6 +26,7 @@ import kotlinx.coroutines.withContext
 
 
 class DemoActivity : AppCompatActivity() {
+    private var showing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,21 +47,21 @@ class DemoActivity : AppCompatActivity() {
         val manager = ShellManager(this)
 
         userBtn.setOnClickListener {
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 val r = UserShell().test()
                 showDialog("User", r)
             }
         }
 
         shizukuBtn.setOnClickListener {
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 val r = ShizukuShell(this@DemoActivity).test()
                 showDialog("Shizuku", r)
             }
         }
 
         rootBtn.setOnClickListener {
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 val r = RootShell().test()
                 showDialog("Root", r)
             }
@@ -73,7 +74,7 @@ class DemoActivity : AppCompatActivity() {
 
         edBtn.setOnClickListener {
             val input = ed.text.toString()
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 val r = manager.exec(input)
                 withContext(Dispatchers.Main) {
                     output.text = r.toUIString()
@@ -103,18 +104,28 @@ class DemoActivity : AppCompatActivity() {
         title: String,
         result: ShellResult
     ) = withContext(Dispatchers.Main) {
+        if (showing) return@withContext
+        showing = true
         MaterialAlertDialogBuilder(this@DemoActivity)
             .setTitle(title)
             .setMessage(result.toUIString())
             .setCancelable(true)
             .setPositiveButton("确认") { _, _ ->
+                showing = false
             }
             .setNegativeButton("取消") { _, _ ->
+                showing = false
             }
             .setOnCancelListener {
+                showing = false
             }.create().show()
     }
 
     private fun ShellResult.toUIString(): String =
         "exit code: $exitCode\noutput: $output"
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showing = false
+    }
 }

@@ -12,10 +12,13 @@ class ShizukuShell(
     private val shizukuUtil by lazy { ShizukuUtil(context) }
 
     override suspend fun isAvailable(): Boolean {
-        val result = shizukuUtil.exec("echo test")
+        val result = shizukuUtil.exec("echo test", TEST_TIMEOUT)
         return judge(result)
     }
 
     override suspend fun exec(command: String): ShellResult =
         shizukuUtil.exec(command)
+
+    override suspend fun exec(command: String, timeoutMillis: Long): ShellResult =
+        shizukuUtil.exec(command, timeoutMillis)
 }

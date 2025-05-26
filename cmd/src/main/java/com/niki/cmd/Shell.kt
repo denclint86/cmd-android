@@ -20,8 +20,5 @@ interface Shell {
 
     suspend fun exec(command: String): ShellResult
 
-    suspend fun exec(command: String, timeoutMillis: Long): ShellResult =
-        withTimeoutOrNull(timeoutMillis) {
-            exec(command)
-        } ?: ShellResult.error("timeout running command")
+    suspend fun exec(command: String, timeoutMillis: Long): ShellResult
 }

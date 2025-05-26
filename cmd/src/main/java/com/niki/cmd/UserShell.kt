@@ -9,5 +9,8 @@ class UserShell : Shell {
     override suspend fun isAvailable(): Boolean = true
 
     override suspend fun exec(command: String): ShellResult =
-        execCommand(command, PERMISSION_LEVEL)
+        execCommandWithTimeout(command, PERMISSION_LEVEL)
+
+    override suspend fun exec(command: String, timeoutMillis: Long): ShellResult =
+        execCommandWithTimeout(command, PERMISSION_LEVEL, timeoutMillis)
 }

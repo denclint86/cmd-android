@@ -13,22 +13,33 @@ internal class ShizukuShellExecutor(
 ) : IShizukuShellExecutor<IUserService> {
     private var callback: (suspend () -> IUserService?)? = null
 
-    override suspend fun execute(command: String): Result<ShellResult> {
-        if (userService.get() == null) {
+    override suspend fun exec(command: String): Result<ShellResult> = execInternal(command, 0L)
+
+    override suspend fun exec(command: String, timeoutMillis: Long): Result<ShellResult> =
+        execInternal(command, timeoutMillis)
+
+    override fun setBindNeededCallback(callback: (suspend () -> IUserService?)?) {
+        this.callback = callback
+    }
+
+    private suspend fun getService(): IUserService? {
+        return userService.get() ?: run {
             Log.d(TAG, "要求重新绑定 user service")
-            userService = WeakReference(callback?.invoke())
+            val service = callback?.invoke()
+            userService = WeakReference(service)
+            return service
         }
+    }
 
-        val u = userService.get() ?: return Result(false, "user service 未绑定")
+    private suspend fun execInternal(command: String, timeout: Long? = 0L): Result<ShellResult> {
+        val service = getService() ?: return Result(false, "user service 未绑定")
 
-        val r = u.exec(command).run {
+        val t = timeout ?: 0L
+
+        val r = service.exec(command, t).run {
             ShellResult(stdout, stderr, exitCode)
         }
 
         return Result(true, null, r)
-    }
-
-    override fun setBindNeededCallback(callback: (suspend () -> IUserService?)?) {
-        this.callback = callback
     }
 }
