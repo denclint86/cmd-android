@@ -21,6 +21,8 @@ if (shell.isAvailable()) {
 
 ![demo](https://github.com/niki914/cmd-android/blob/master/demo.gif)
 
+[下载测载 demo](https://github.com/niki914/cmd-android/releases/tag/demo)
+
 ## 快速开始
 
 ### 1. 添加 maven
