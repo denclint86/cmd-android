@@ -19,7 +19,7 @@ if (shell.isAvailable()) {
 - **Kotlin 协程集成**：统一而简单的挂起式 API，告别繁琐。
 - **统一接口**：`Shell` 接口抽象不同模式，提供一致、简洁的调用体验。 
 
-![demo](https://github.com/denclint86/cmd-android/blob/master/demo.gif)
+![demo](https://github.com/niki914/cmd-android/blob/master/demo.gif)
 
 ## 快速开始
 
@@ -31,7 +31,7 @@ if (shell.isAvailable()) {
 dependencyResolutionManagement {
 	repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 	repositories {
-    	mavenCentral()
+    	...
 	    maven { url = uri("https://jitpack.io") }
 	}
 }
@@ -43,25 +43,8 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.github.denclint86:cmd-android:${latest_version}") // 查看本项目最新 release
-    implementation("dev.rikka.shizuku:provider:shizuku_api:${latest_version}")
+    implementation("com.github.niki914:cmd-android:${latest_version}") // 查看本项目最新 release
 }
-```
-
-在[Shizuku 官方仓库](https://github.com/RikkaApps/Shizuku) 查看最新版本
-
-### 3. 配置 Shizuku Provider
-
-在 `AndroidManifest.xml` 中添加：
-
-```xml
-<provider
-    android:name="rikka.shizuku.ShizukuProvider"
-    android:authorities="${applicationId}.shizuku"
-    android:enabled="true"
-    android:exported="true"
-    android:multiprocess="false"
-    android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
 ```
 
 > **提示**：想深入了解 Shizuku？查看 [Shizuku 官方文档](https://shizuku.rikka.app/) 或 [示例 Demo](https://github.com/RikkaApps/Shizuku-API/tree/master/demo)。
@@ -112,4 +95,4 @@ launch(Dispatchers.IO) {
 -dontwarn com.niki.**
 ```
 
-> 遇到问题？提交 [Issue](https://github.com/denclint86/cmd-android/issues)。
+> 遇到问题？提交 [Issue](https://github.com/niki914/cmd-android/issues)。

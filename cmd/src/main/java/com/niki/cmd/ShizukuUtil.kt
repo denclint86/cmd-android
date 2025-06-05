@@ -44,27 +44,31 @@ internal class ShizukuUtil(context: Context) {
         permissionHandler.ensurePermission().isSuccess
 
     private suspend fun execInternal(command: String, timeout: Long = 0L): ShellResult {
-        val start = System.currentTimeMillis()
-        val permissionResult = permissionHandler.ensurePermission()
-        if (!permissionResult.isSuccess)
-            return ShellResult.error(permissionResult.message)
+        try {
+            val start = System.currentTimeMillis()
+            val permissionResult = permissionHandler.ensurePermission()
+            if (!permissionResult.isSuccess)
+                return ShellResult.error(permissionResult.message)
 
-        val serviceBindResult = userServiceBinder.bind()
-        if (!serviceBindResult.isSuccess)
-            return ShellResult.error(serviceBindResult.message)
+            val serviceBindResult = userServiceBinder.bind()
+            if (!serviceBindResult.isSuccess)
+                return ShellResult.error(serviceBindResult.message)
 
-        val t = timeout - (System.currentTimeMillis() - start)
-        if (t < 0) {
-            return ShellResult.error("timeout running shizuku command")
+            val t = timeout - (System.currentTimeMillis() - start)
+            if (t < 0) {
+                return ShellResult.error("timeout running shizuku command")
+            }
+
+            val execResult = shizukuShellExecutor.exec(command, t)
+
+            execResult.data?.let {
+                Log.d(TAG, "Shizuku util 正常读取: $it")
+            }
+
+            return execResult.data
+                ?: ShellResult.error("Shizuku service unsupported")
+        } catch (t: Throwable) {
+            return ShellResult.error(t.message)
         }
-
-        val execResult = shizukuShellExecutor.exec(command, t)
-
-        execResult.data?.let {
-            Log.d(TAG, "Shizuku util 正常读取: $it")
-        }
-
-        return execResult.data
-            ?: ShellResult.error("Shizuku service unsupported")
     }
 }

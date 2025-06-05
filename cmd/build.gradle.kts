@@ -39,6 +39,8 @@ android {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
+
+    implementation(libs.shizuku.provider)
     implementation(libs.shizuku.api)
 }
 
