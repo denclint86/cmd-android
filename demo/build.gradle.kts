@@ -49,8 +49,6 @@ android {
 }
 
 dependencies {
-//    implementation("com.github.denclint86:cmd-android:0.8.0")
-    implementation(project(":cmd"))
-//    implementation(libs.shizuku.provider)
+    implementation("com.github.niki914:cmd-android:0.8.2")
     implementation(libs.material)
 }

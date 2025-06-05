@@ -85,6 +85,7 @@ launch(Dispatchers.IO) {
 
 - **Root 模式**：依赖 `su` 命令，需确保设备已 Root 并可访问 `su`。
 - **R8 混淆**：启用精简和混淆后，Shizuku 模块概率出现未知问题，表现为可以授权但命令不能被执行，需要在 `proguard-rules.pro` 中添加规则过滤:
+- **不支持交互式命令调用**: 不支持运行如`su`等命令后进入的新的交互式命令状态的情况
 
 ```text
 -keep class dev.rikka.shizuku.** { *; }
